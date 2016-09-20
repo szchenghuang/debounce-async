@@ -1,0 +1,26 @@
+{
+  "name": "debounce-async",
+  "version": "0.0.0",
+  "description": "A debounce function that delays invoking  asynchronous functions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/szchenghuang/debounce-async.git"
+  },
+  "keywords": [
+    "debounce",
+    "throttle",
+    "promise",
+    "asynchronous",
+    "timeout"
+  ],
+  "author": "szchenghuang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/szchenghuang/debounce-async/issues"
+  },
+  "homepage": "https://github.com/szchenghuang/debounce-async#readme"
+}
