@@ -1,6 +1,6 @@
 {
   "name": "debounce-async",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A debounced function that delays invoking  asynchronous functions.",
   "main": "index.js",
   "scripts": {
