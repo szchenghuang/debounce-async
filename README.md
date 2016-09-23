@@ -9,7 +9,7 @@
 
 A debounced function that delays invoking asynchronous functions.
 
-## Preface ##
+## Preliminaries ##
 
 A debounced function groups sequential calls to a function within a period. Only
 the last call in the group is executed. The others are simply ignored as if no
@@ -42,6 +42,8 @@ var debounce = require( 'debounce-async' );
 ```
 
 ## Example ##
+
+### Promise ###
 
 ```js
 var debounce = require( 'debounce-async' );
@@ -85,6 +87,23 @@ resolved result or rejected error on the console.
 This snippet results in the given output. The first promise was rejected while
 the second one was resolved. It is because the second call comes before the delay
 of 100ms since the first call fired.
+
+### async/await ###
+
+Same thing when it comes to asynchronous ES7 async/await functions. Take the
+prior example and transform the `f` into an ES7 async function.
+
+```js
+var f = async function( value ) {
+  return await new Promise( resolve => {
+    setTimeout( () => {
+      resolve( value );
+    }, 50 );
+  });
+};
+```
+
+Same output is expected when running it.
 
 ## Test ##
 
