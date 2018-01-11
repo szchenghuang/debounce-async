@@ -17,7 +17,7 @@ function debounce(
         })
     }
 
-    shouldCancel = true;
+    shouldCancel = true
     return new Promise( ( resolve, reject ) => {
       latestResolve = resolve
       timerId = setTimeout( invokeFunc.bind( this, args, resolve, reject ), wait )
