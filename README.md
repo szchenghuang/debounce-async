@@ -15,9 +15,20 @@ A debounced function groups sequential calls to a function within a period. Only
 the last call in the group is executed. The others are simply ignored as if no
 calls to them ever happened.
 
-When it comes to asynchronous functions, this package ignores a function call
-by rejecting it. Its original fullfillment is bypassed. It is simply rejected,
-with a customizable object to tell which is an ignorance.
+Say `d` is a debounced function of `f`, `var d = debounce(f, 400);`, and `d` is
+called evenly during the first and the third seconds as the timeline below.
+
+seconds elapsed    0        1         2         3         4
+d called           d d d d d - - - - - d d d d d - - - - - 
+f called                       f                   f
+
+Only the last of the five sequential calls to `d` actually invokes `f`. The rest
+four are simply ignored.
+
+When it comes to promise-based asynchronous functions, this package ignores
+function calls by rejecting the promises. The original fullfillment is bypassed,
+and simply rejected with a customizable object for the sake of telling which/when
+an ignorance occurs.
 
 ## Installation ##
 
@@ -31,15 +42,21 @@ npm install debounce-async --save
 var debounce = require( 'debounce-async' );
 
 /**
- * debounce(func, [wait=0], [options={}])
-
- * func (Function): The function to debounce.
- * [wait=0] (number): The number of milliseconds to delay.
- * [options={}] (Object): The options object.
- * [options.leading=false] (boolean): Specify invoking on the leading edge of the timeout.
- * [options.cancelObj='canceled'] (object): Specify the rejected object when canceled.
- */
+  * debounce(func, [wait=0], [options={}])
+  *
+  * @param {Function} func The function to debounce.
+  * @param {number} [wait=0] The number of milliseconds to delay.
+  * @param {Object} [options={}] The options object.
+  * @param {boolean} [options.leading=false] Specify invoking on the leading edge of the timeout.
+  * @param {number} [options.maxWait] The maximum time `func` is allowed to be delayed before it's invoked.
+  * @param {boolean} [options.trailing=true]  Specify invoking on the trailing edge of the timeout.
+  * @param {cancelObj} [options.cancelObj='canceled'] Specify the error object to be rejected.
+  * @returns {Function} Returns the new debounced function.
+  */
 ```
+
+This package aims at maintaining the same signature of the `debounce` function from `lodash`.
+Please report if there is discrenency.
 
 ## Example ##
 
@@ -103,7 +120,7 @@ var f = async function( value ) {
 };
 ```
 
-Same output is expected when running it.
+Same output can be expected after execution.
 
 ## Test ##
 

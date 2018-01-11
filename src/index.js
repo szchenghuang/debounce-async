@@ -1,3 +1,13 @@
+/**
+  * debounce(func, [wait=0], [options={}])
+  *
+  * @param {Function} func The function to debounce.
+  * @param {number} [wait=0] The number of milliseconds to delay.
+  * @param {Object} [options={}] The options object.
+  * @param {boolean} [options.leading=false] Specify invoking on the leading edge of the timeout.
+  * @param {cancelObj} [options.cancelObj='canceled'] Specify the error object to be rejected.
+  * @returns {Function} Returns the new debounced function.
+  */
 function debounce(
   func,
   wait = 0,
