@@ -28,7 +28,7 @@ describe( 'debounce-async', function() {
 
       PromiseResults(promises)
         .then( res => {
-          res.should.deep.equal([{ isCanceled: true }, 'bar'])
+          res.should.deep.equal(['canceled', 'bar'])
         });
     })
 
@@ -43,12 +43,14 @@ describe( 'debounce-async', function() {
       }
     })
 
-    it('if leading is true, the first promise is not canceled', async () => {
+    it('if leading is true', async () => {
       const debounced = debounce(async value => value, 100, {leading: true})
-      const promises = ['foo', 'bar'].map(debounced)
-      const results = await Promise.all(promises)
+      const promises = ['foo', 'bar', 'baz'].map(debounced)
 
-      results.should.deep.equal(['foo', 'bar'])
+      PromiseResults(promises)
+        .then( res => {
+          res.should.deep.equal(['foo', 'canceled', 'baz'])
+        });
     })
 
     it('do not call the given function repeatedly', async () => {
@@ -58,8 +60,8 @@ describe( 'debounce-async', function() {
 
       PromiseResults(promises)
         .then( res => {
-          res.should.deep.equal([{isCanceled: true},2,,])
-          res.should.deep.equal(callCount, 1)
+          res.should.deep.equal(['canceled',2,,])
+          callCount.should.deep.equal(1)
         });
     })
 
@@ -74,8 +76,7 @@ describe( 'debounce-async', function() {
     it('waits until the wait time has passed', async () => {
       let callCount = 0
       const debounced = debounce(async () => callCount++, 10)
-      debounced()
-      debounced()
+
       debounced()
       callCount.should.deep.equal(0)
       await sleep(20)
@@ -85,8 +86,7 @@ describe( 'debounce-async', function() {
     it('supports passing function as wait parameter', async () => {
       let callCount = 0
       const debounced = debounce(async () => callCount++, () => 10)
-      debounced()
-      debounced()
+
       debounced()
       callCount.should.deep.equal(0)
       await sleep(20)
@@ -119,7 +119,7 @@ describe( 'debounce-async', function() {
       context.foo.should.deep.equal(2)
     })
 
-    it('maintains the context of the original function when leading=true', async () => {
+    it('maintains the context of the original function when leading is true', async () => {
       const context = {
         foo: 1,
         debounced: debounce(async function () { await this.foo++ }, 10, {leading: true})
@@ -131,5 +131,3 @@ describe( 'debounce-async', function() {
     })
   });
 });
-
-

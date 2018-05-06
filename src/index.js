@@ -19,31 +19,37 @@ function debounce(
   let timerId, latestResolve, shouldCancel
 
   return function ( ...args ) {
-    if ( !latestResolve ) {
-      return leading ?
-        func.apply( this, args ) : new Promise( ( resolve, reject ) => {
-          latestResolve = resolve
-          timerId = setTimeout( invokeFunc.bind( this, args, resolve, reject ), wait )
-        })
+    if ( !latestResolve ) { // The first call since last invocation.
+      return new Promise( ( resolve, reject ) => {
+        latestResolve = resolve
+        if ( leading ) {
+          invokeAtLeading.apply( this, [ args, resolve, reject ] );
+        } else {
+          timerId = setTimeout( invokeAtTrailing.bind( this, args, resolve, reject ), wait )
+        }
+      })
     }
 
     shouldCancel = true
     return new Promise( ( resolve, reject ) => {
       latestResolve = resolve
-      timerId = setTimeout( invokeFunc.bind( this, args, resolve, reject ), wait )
+      timerId = setTimeout( invokeAtTrailing.bind( this, args, resolve, reject ), wait )
     })
   }
 
-  function invokeFunc( args, resolve, reject ) {
+  function invokeAtLeading( args, resolve, reject ) {
+    func.apply( this, args ).then( resolve ).catch( reject )
+    shouldCancel = false
+  }
+
+  function invokeAtTrailing( args, resolve, reject ) {
     if ( shouldCancel && resolve !== latestResolve ) {
       reject( cancelObj )
     } else {
       func.apply( this, args ).then( resolve ).catch( reject )
-      if ( resolve === latestResolve ) {
-        shouldCancel = false
-        clearTimeout( timerId )
-        timerId = latestResolve = null
-      }
+      shouldCancel = false
+      clearTimeout( timerId )
+      timerId = latestResolve = null
     }
   }
 }

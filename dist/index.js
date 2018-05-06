@@ -10,8 +10,6 @@ Object.defineProperty(exports, "__esModule", {
   * @param {number} [wait=0] The number of milliseconds to delay.
   * @param {Object} [options={}] The options object.
   * @param {boolean} [options.leading=false] Specify invoking on the leading edge of the timeout.
-  * @param {number} [options.maxWait] The maximum time `func` is allowed to be delayed before it's invoked.
-  * @param {boolean} [options.trailing=true]  Specify invoking on the trailing edge of the timeout.
   * @param {cancelObj} [options.cancelObj='canceled'] Specify the error object to be rejected.
   * @returns {Function} Returns the new debounced function.
   */
@@ -22,9 +20,6 @@ function debounce(func) {
 
   var _ref$leading = _ref.leading;
   var leading = _ref$leading === undefined ? false : _ref$leading;
-  var maxWait = _ref.maxWait;
-  var _ref$trailing = _ref.trailing;
-  var trailing = _ref$trailing === undefined ? true : _ref$trailing;
   var _ref$cancelObj = _ref.cancelObj;
   var cancelObj = _ref$cancelObj === undefined ? 'canceled' : _ref$cancelObj;
 
@@ -40,29 +35,37 @@ function debounce(func) {
     }
 
     if (!latestResolve) {
-      return leading ? func.apply(this, args) : new Promise(function (resolve, reject) {
+      // The first call since last invocation.
+      return new Promise(function (resolve, reject) {
         latestResolve = resolve;
-        timerId = setTimeout(invokeFunc.bind(_this, args, resolve, reject), wait);
+        if (leading) {
+          invokeAtLeading.apply(_this, [args, resolve, reject]);
+        } else {
+          timerId = setTimeout(invokeAtTrailing.bind(_this, args, resolve, reject), wait);
+        }
       });
     }
 
     shouldCancel = true;
     return new Promise(function (resolve, reject) {
       latestResolve = resolve;
-      timerId = setTimeout(invokeFunc.bind(_this, args, resolve, reject), wait);
+      timerId = setTimeout(invokeAtTrailing.bind(_this, args, resolve, reject), wait);
     });
   };
 
-  function invokeFunc(args, resolve, reject) {
+  function invokeAtLeading(args, resolve, reject) {
+    func.apply(this, args).then(resolve).catch(reject);
+    shouldCancel = false;
+  }
+
+  function invokeAtTrailing(args, resolve, reject) {
     if (shouldCancel && resolve !== latestResolve) {
       reject(cancelObj);
     } else {
       func.apply(this, args).then(resolve).catch(reject);
-      if (resolve === latestResolve) {
-        shouldCancel = false;
-        clearTimeout(timerId);
-        timerId = latestResolve = null;
-      }
+      shouldCancel = false;
+      clearTimeout(timerId);
+      timerId = latestResolve = null;
     }
   }
 }

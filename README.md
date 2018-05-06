@@ -48,8 +48,6 @@ var debounce = require( 'debounce-async' );
   * @param {number} [wait=0] The number of milliseconds to delay.
   * @param {Object} [options={}] The options object.
   * @param {boolean} [options.leading=false] Specify invoking on the leading edge of the timeout.
-  * @param {number} [options.maxWait] The maximum time `func` is allowed to be delayed before it's invoked.
-  * @param {boolean} [options.trailing=true] Specify invoking on the trailing edge of the timeout.
   * @param {cancelObj} [options.cancelObj='canceled'] Specify the error object to be rejected.
   * @returns {Function} Returns the new debounced function.
   */
@@ -65,18 +63,10 @@ Please report if there is discrenency.
 ```js
 var debounce = require( 'debounce-async' );
 
-var f = function( value ) {
-  return new Promise( resolve => {
-    setTimeout( () => {
-      resolve( value );
-    }, 50 );
-  });
-};
-
+var f = value => new Promise( resolve => setTimeout( () => resolve( value ), 50 ) );
 var debounced = debounce( f, 100 );
 
 var promises = [ 'foo', 'bar' ].map( debounced );
-
 promises.forEach( promise => {
   promise
     .then( res => {
@@ -111,13 +101,7 @@ Same thing when it comes to asynchronous ES7 async/await functions. Take the
 prior example and transform the `f` into an ES7 async function.
 
 ```js
-var f = async function( value ) {
-  return await new Promise( resolve => {
-    setTimeout( () => {
-      resolve( value );
-    }, 50 );
-  });
-};
+var f = async value => await new Promise( resolve => setTimeout( () => resolve( value ), 50 ) );
 ```
 
 Same output can be expected after execution.
