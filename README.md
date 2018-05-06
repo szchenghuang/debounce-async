@@ -49,7 +49,7 @@ var debounce = require( 'debounce-async' );
   * @param {Object} [options={}] The options object.
   * @param {boolean} [options.leading=false] Specify invoking on the leading edge of the timeout.
   * @param {number} [options.maxWait] The maximum time `func` is allowed to be delayed before it's invoked.
-  * @param {boolean} [options.trailing=true]  Specify invoking on the trailing edge of the timeout.
+  * @param {boolean} [options.trailing=true] Specify invoking on the trailing edge of the timeout.
   * @param {cancelObj} [options.cancelObj='canceled'] Specify the error object to be rejected.
   * @returns {Function} Returns the new debounced function.
   */
