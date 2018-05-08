@@ -12,23 +12,25 @@ A debounced function that delays invoking asynchronous functions.
 ## Preliminaries ##
 
 A debounced function groups sequential calls to a function within a period. Only
-the last call in the group is executed. The others are simply ignored as if no
-calls to them ever happened.
+the last call in the group is executed. The others are simply ignored with
+rejections as if no calls to them ever happened.
 
-Say `d` is a debounced function of `f`, `var d = debounce(f, 400);`, and `d` is
-called evenly during the first and the third seconds as the timeline below.
+Say `d` is a debounced function of `f`, `var d = debounce(f, 1000);`, where f is
+an asynchronous function that returns a promise being resolved in 400ms since it
+gets called. Below is a depiction of a sequence of calls to `d`.
 
-seconds elapsed    0        1         2         3         4
-d called           d d d d d - - - - - d d d d d - - - - - 
-f called                       f                   f
+```
+seconds elapsed    0         1         2         3         4
+d called           - d d d d d - - - - - d d d d - - d - - - - -
+                     x x x x |           x x x x     |
+f called                     +-------> f             +-------> f
+                                       |                       |
+promise resolved                       +-> *                   +-> *
+```
 
-Only the last of the five sequential calls to `d` actually invokes `f`. The rest
-four are simply ignored.
-
-When it comes to promise-based asynchronous functions, this package ignores
-function calls by rejecting the promises. The original fullfillment is bypassed,
-and simply rejected with a customizable object for the sake of telling which/when
-an ignorance occurs.
+`d` denotes a call to function `d`, `f` denotes a call to function `f`, and `*`
+denotes a promise returned by `f` is resolved. `x` denotes a call to `d` returns
+a rejected promise.
 
 ## Installation ##
 
@@ -69,12 +71,8 @@ var debounced = debounce( f, 100 );
 var promises = [ 'foo', 'bar' ].map( debounced );
 promises.forEach( promise => {
   promise
-    .then( res => {
-      console.log( 'resolved:', res );
-    })
-    .catch( err => {
-      console.log( 'rejected:', err );
-    });
+    .then( res => console.log( 'resolved:', res ) )
+    .catch( err => console.log( 'rejected:', err ) )
 });
 
 // Output:
@@ -104,7 +102,7 @@ prior example and transform the `f` into an ES7 async function.
 var f = async value => await new Promise( resolve => setTimeout( () => resolve( value ), 50 ) );
 ```
 
-Same output can be expected after execution.
+Same output can be expected.
 
 ## Test ##
 
