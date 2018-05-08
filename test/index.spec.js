@@ -53,6 +53,32 @@ describe( 'debounce-async', function() {
         });
     })
 
+    it('delays invoking the given function', async () => {
+      let callCount = 0
+      const f = value => new Promise( resolve =>
+        setTimeout( () => {
+          callCount++
+          resolve( value )
+        }, 400 )
+      )
+      const debounced = debounce(f, 1000)
+      const promises = []
+      promises.push( debounced() )
+
+      await sleep(1000)
+      callCount.should.deep.equal(0)
+
+      promises.push( debounced() )
+
+      await sleep(300)
+      callCount.should.deep.equal(0)
+
+      PromiseResults(promises)
+        .then( res => {
+          callCount.should.deep.equal(1)
+        });
+    });
+
     it('do not call the given function repeatedly', async () => {
       let callCount = 0
       const debounced = debounce(async value => { callCount++; return value }, 100)
