@@ -70,4 +70,4 @@ function debounce(func) {
   }
 }
 
-exports.default = debounce;
+export default debounce
