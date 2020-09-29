@@ -1,8 +1,9 @@
 {
-  "name": "debounce-async",
+  "name": "debounce-async-es",
   "version": "0.0.2",
   "description": "A debounced function that delays invoking  asynchronous functions.",
   "main": "index.js",
+  "module": "src/index.js",
   "scripts": {
     "lint": "eslint .",
     "test": "mocha --compilers js:babel-core/register",
